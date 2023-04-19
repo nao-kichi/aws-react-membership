@@ -1,71 +1,101 @@
-# Getting Started with Create React App
+# Amplify URL　/ GitHubソースリポジトリ
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+#IAMユーザー・Amplifyアプリ名は.envに記述している
 
-## Available Scripts
+#Amplify URL
+https://main.d3mclth3yz9sof.amplifyapp.com 
 
-In the project directory, you can run:
+#GitHubソースリポジトリ
+https://github.com/nao-kichi/aws-react-membership/tree/main
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 概要
+・AWS AmplifyとReactアプリで会員機能サイトを作成
+・Register.js / Login.js / Mypage.jsで各々ファイルを作成する。
+・SPA構築をして、各ページを閲覧できるようにする。
+・データベースは、NoSQLとなっている。メールアドレスとパスワードを格納する。
+・オブジェクトストレージはS3を使用して、プロフィール画像などを保存する
+・AWS UIサポートは後に検討をする
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
 
-### `npm test`
+### 必要なコマンドと手順
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+#Reactディレクトリを作成する
+create-react-app aws-react-member
 
-### `npm run build`
+#先にReactアプリに移動
+cd aws-react-member
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+#GitHubにpush作業をする
+#このGitHubのリポジトリを選択してデプロイを行う。
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+#Amplifyでブラウザでデプロイ作業を行う。
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+#AWS CLIをインストール
+brew update
+brew install awscli
 
-### `npm run eject`
+#AWS CLIの次に、Amplify CLIをインストール
+npm install -g @aws-amplify/cli
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+#インストール確認
+amplify -v
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+#Reactアプリ内で、Amplifyを使用可能状態にする
+amplify init
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+#Reactアプリ内でAmplify UIを使用可能状態を作成する
+npm install aws-amplify @aws-amplify/ui-react
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+#amplify設定構築(既に完了している場合は、initへ行く)
+#事前にIAMユーザーのアクスキーとシークレットキーが必要
+#出力内容が異なる時があるので、注意する
+amplify configure
 
-## Learn More
+#Reactアプリ内で、Amplifyを使用可能状態にする
+#事前に、IAMユーザーに権限付与・必要なポリシーを作成
+#こちらでどのユーザーか指定している。
+amplify init
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+#認証機能を追加する(Default,Username,No)
+amplify add auth
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+#S3ストレージの設定(事前にバケットを作成とポリシー作成)
+→Auth users only(Auth and guest usersかも),create / update, Lambda No
+amplify add storage
 
-### Code Splitting
+#DynamoDBの設定(テーブル作成とポリシー作成)
+→GraphQL, continue, Single object with fields
+amplify add api
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+#全ての設定が終了したタイミングでpushする
+→Yes, Js or Ts , Yes, Enter
+amplify push
 
-### Analyzing the Bundle Size
+#React・Amplifyのコード修正を行う。
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+#再デプロイについて
+GitHubに連携されている状態で、既にブラザウでデプロイをしている場合
+GitHubにpushするだけでAmplifyに対する再デプロイは完了している。
+ただし、GitHubにpushするとAmplifuyのmainページが更新されているので完了するまで待つ。
 
-### Making a Progressive Web App
+こちらのコマンドは、GitHubと連携していない場合などに
+使用されると思う。こちらのREADME通りに行うと不要だが
+心配なため残しておく。
+amplify publish
+amplify hosting add
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
-### Advanced Configuration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+#### 注意点と料金発生について
 
-### Deployment
+#accesskeyとsecretkeyついて
+access keyとsecret keyはセットで作成されている。
+access keyとsecret keyの確認方法は新規作成時かDLしかない
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+#料金発生について
+Amplifyの料金は、一定のAuth,S3,Route53などを超えた際に発生する。
 
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-# aws-react-membership
+#Reactアプリ名・Amplifyアプリ名・GitHubリポジトリ名はほぼ同じものにする
+#IAMユーザー名は特に気にする必要はない。
+#S3バケットは、Amplifyアプリを作成(init)した時に自動で生成される。
